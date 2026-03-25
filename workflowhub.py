@@ -452,28 +452,14 @@ def run_topworkflows(args):
 # types subcommand
 # ---------------------------------------------------------------------------
 
-def get_all_workflows_with_types():
-    """Paginate all workflows and extract type information from their attributes."""
-    raw = paginate_all("workflows.json", label="workflows")
-    workflows = []
-    for item in raw:
-        if not isinstance(item, dict):
-            continue
-        attrs = item.get("attributes", {})
-        wt = attrs.get("workflow_type", {})
-        if isinstance(wt, dict):
-            wf_type = wt.get("title", wt.get("key", "Unknown"))
-        elif wt:
-            wf_type = str(wt)
-        else:
-            wf_type = "Unknown"
-
-        workflows.append({
-            "id": str(item.get("id", "")),
-            "title": attrs.get("title", ""),
-            "type": wf_type or "Unknown",
-        })
-    return workflows
+def get_workflow_type(wf_id):
+    """Fetch the workflow_class title for a single workflow."""
+    data = fetch_json(f"{BASE_URL}/workflows/{wf_id}.json")
+    if isinstance(data, dict) and "data" in data:
+        wc = data["data"].get("attributes", {}).get("workflow_class", {})
+        if isinstance(wc, dict):
+            return wc.get("title", wc.get("key", "Unknown")) or "Unknown"
+    return "Unknown"
 
 
 def run_types(args):
@@ -482,8 +468,30 @@ def run_types(args):
     print("=" * 60)
     print()
 
-    workflows = get_all_workflows_with_types()
-    print(f"\nFound {len(workflows)} workflows total.\n")
+    all_wfs = get_all_workflow_ids()
+    total_found = len(all_wfs)
+    print(f"\nFound {total_found} workflows total.")
+
+    if args.max_workflows and len(all_wfs) > args.max_workflows:
+        print(f"Checking the first {args.max_workflows} (use --max-workflows 0 to check all — slow).")
+        all_wfs = all_wfs[:args.max_workflows]
+    else:
+        print("Fetching type for each workflow (this may take a while)...")
+    print()
+
+    workflows = []
+    for i, wf in enumerate(all_wfs):
+        try:
+            wf_type = get_workflow_type(wf["id"])
+            workflows.append({"id": wf["id"], "title": wf.get("title", ""), "type": wf_type})
+            if (i + 1) % 50 == 0:
+                print(f"  [{i+1}/{len(all_wfs)}] processed...")
+        except Exception as e:
+            print(f"  [{i+1}/{len(all_wfs)}] Error for workflow {wf['id']}: {e}")
+            workflows.append({"id": wf["id"], "title": wf.get("title", ""), "type": "Unknown"})
+        time.sleep(0.3)
+
+    print(f"\nProcessed {len(workflows)} workflows.\n")
 
     counts = defaultdict(int)
     for wf in workflows:
@@ -680,6 +688,10 @@ def main():
         "types",
         help="Show a breakdown of workflow counts by type",
         description="Count workflows by type (Galaxy, Nextflow, Snakemake, CWL, etc.).",
+    )
+    types_parser.add_argument(
+        "--max-workflows", type=int, default=200, metavar="N",
+        help="Maximum number of workflows to check (default: 200; use 0 for all — slow)",
     )
     types_parser.add_argument(
         "--output", default="workflowhub_types.csv", metavar="FILE",
