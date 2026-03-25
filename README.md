@@ -63,13 +63,13 @@ Fetches view and download counts for workflows across the entire site and ranks 
 python3 workflowhub.py topworkflows
 ```
 
-> **Note:** This command needs to fetch each workflow's HTML page to get view/download counts, which takes time. By default it checks the first 200 workflows. Use `--max-workflows 0` to check all of them (slow).
+> **Note:** This command needs to fetch each workflow's HTML page to get view/download counts, which takes time. By default it checks all workflows. Use `--max-workflows 200` to limit to the first 200 (faster).
 
 | Option | Description | Default |
 |---|---|---|
 | `--top N` | How many workflows to display | `50` |
 | `--sort-by views\|downloads` | Stat to rank by | `views` |
-| `--max-workflows N` | Maximum workflows to check (`0` = all) | `200` |
+| `--max-workflows N` | Maximum workflows to check (`0` = all) | `0` (all) |
 | `--output FILE` | CSV file to save results to | `workflowhub_topworkflows.csv` |
 
 Example — top 20 by downloads:
@@ -131,6 +131,18 @@ python3 workflowhub.py leaderboard --top 100 --highlight "Smith"
 
 ---
 
+### `all` — run everything at once
+
+Runs all of the above subcommands in sequence using their default settings. Output is saved to separate CSV files for each.
+
+```bash
+python3 workflowhub.py all
+```
+
+> **Note:** This will take a while as it queries the entire site.
+
+---
+
 ## Help
 
 Built-in help is available for all commands:
@@ -142,6 +154,7 @@ python3 workflowhub.py topworkflows --help
 python3 workflowhub.py types --help
 python3 workflowhub.py orgs --help
 python3 workflowhub.py leaderboard --help
+python3 workflowhub.py all --help
 ```
 
 ---
