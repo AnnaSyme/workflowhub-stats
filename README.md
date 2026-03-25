@@ -10,10 +10,10 @@ Built by [Anna Syme](https://github.com/annasyme) with [Claude](https://claude.a
 WorkflowHub is a registry for scientific workflows. This tool lets you query it from the command line to answer questions like:
 
 - Which workflows in a project have the most views and downloads?
-- Who are the top contributors by number of workflows?
 - Which workflows are most popular across the entire site?
 - What workflow types (Galaxy, Nextflow, Snakemake, etc.) are most common?
 - Which spaces/projects have the most workflows?
+- Who are the top contributors by number of workflows?
 
 Results are printed to the terminal and saved as a CSV file.
 
@@ -52,28 +52,6 @@ python3 workflowhub.py galaxy --project-id 12
 |---|---|---|
 | `--project-id ID` | WorkflowHub project ID | `54` (Galaxy Australia) |
 | `--output FILE` | CSV file to save results to | `workflowhub_galaxy.csv` |
-
----
-
-### `leaderboard` — contributor leaderboard
-
-Ranks all WorkflowHub contributors by number of workflows.
-
-```bash
-python3 workflowhub.py leaderboard
-```
-
-| Option | Description | Default |
-|---|---|---|
-| `--top N` | How many top contributors to display | `50` |
-| `--highlight NAME` | Highlight a contributor whose name contains this text (case-insensitive) | none |
-| `--output FILE` | CSV file to save results to | `workflowhub_leaderboard.csv` |
-
-Example — show top 100 and highlight yourself:
-
-```bash
-python3 workflowhub.py leaderboard --top 100 --highlight "Syme"
-```
 
 ---
 
@@ -131,6 +109,28 @@ python3 workflowhub.py orgs
 
 ---
 
+### `leaderboard` — contributor leaderboard
+
+Ranks all WorkflowHub contributors by number of workflows.
+
+```bash
+python3 workflowhub.py leaderboard
+```
+
+| Option | Description | Default |
+|---|---|---|
+| `--top N` | How many top contributors to display | `50` |
+| `--highlight NAME` | Highlight a contributor whose name contains this text (case-insensitive) | none |
+| `--output FILE` | CSV file to save results to | `workflowhub_leaderboard.csv` |
+
+Example — show top 100 and highlight a specific person:
+
+```bash
+python3 workflowhub.py leaderboard --top 100 --highlight "Smith"
+```
+
+---
+
 ## Help
 
 Built-in help is available for all commands:
@@ -138,10 +138,10 @@ Built-in help is available for all commands:
 ```bash
 python3 workflowhub.py --help
 python3 workflowhub.py galaxy --help
-python3 workflowhub.py leaderboard --help
 python3 workflowhub.py topworkflows --help
 python3 workflowhub.py types --help
 python3 workflowhub.py orgs --help
+python3 workflowhub.py leaderboard --help
 ```
 
 ---

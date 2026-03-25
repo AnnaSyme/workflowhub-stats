@@ -20,7 +20,7 @@ Usage:
 Examples:
     python3 workflowhub.py galaxy
     python3 workflowhub.py galaxy --project-id 12 --output my_project.csv
-    python3 workflowhub.py leaderboard --top 100 --highlight "Syme"
+    python3 workflowhub.py leaderboard --top 100 --highlight "Smith"
     python3 workflowhub.py topworkflows --top 20 --sort-by downloads
     python3 workflowhub.py topworkflows --max-workflows 0   # check all (slow)
     python3 workflowhub.py types
