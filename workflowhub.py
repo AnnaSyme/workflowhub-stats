@@ -9,6 +9,7 @@ Subcommands:
   topworkflows  Show the most-viewed or most-downloaded workflows across the entire site
   types         Show a breakdown of workflow counts by type (Galaxy, Nextflow, Snakemake, etc.)
   orgs          Show a leaderboard of spaces/projects ranked by workflow count
+  all           Run all of the above subcommands in sequence using default settings
 
 Usage:
     python3 workflowhub.py galaxy [--project-id ID] [--output FILE]
@@ -16,6 +17,7 @@ Usage:
     python3 workflowhub.py topworkflows [--top N] [--sort-by views|downloads] [--max-workflows N] [--output FILE]
     python3 workflowhub.py types [--output FILE]
     python3 workflowhub.py orgs [--top N] [--output FILE]
+    python3 workflowhub.py all
 
 Examples:
     python3 workflowhub.py galaxy
@@ -25,6 +27,7 @@ Examples:
     python3 workflowhub.py topworkflows --max-workflows 0   # check all (slow)
     python3 workflowhub.py types
     python3 workflowhub.py orgs --top 25
+    python3 workflowhub.py all
 """
 
 import argparse
@@ -611,6 +614,69 @@ def run_orgs(args):
 
 
 # ---------------------------------------------------------------------------
+# all subcommand
+# ---------------------------------------------------------------------------
+
+def run_all(args):
+    """Run all subcommands in sequence using their default settings."""
+    import types as _types
+
+    print("\n" + "#" * 70)
+    print("# Running ALL subcommands")
+    print("#" * 70 + "\n")
+
+    galaxy_args = _types.SimpleNamespace(
+        project_id=54,
+        output="workflowhub_galaxy.csv",
+    )
+    run_galaxy(galaxy_args)
+
+    print("\n" + "#" * 70 + "\n")
+
+    types_args = _types.SimpleNamespace(
+        max_workflows=200,
+        output="workflowhub_types.csv",
+    )
+    run_types(types_args)
+
+    print("\n" + "#" * 70 + "\n")
+
+    tw_args = _types.SimpleNamespace(
+        top=50,
+        sort_by="views",
+        max_workflows=200,
+        output="workflowhub_topworkflows.csv",
+    )
+    run_topworkflows(tw_args)
+
+    print("\n" + "#" * 70 + "\n")
+
+    orgs_args = _types.SimpleNamespace(
+        top=50,
+        output="workflowhub_orgs.csv",
+    )
+    run_orgs(orgs_args)
+
+    print("\n" + "#" * 70 + "\n")
+
+    lb_args = _types.SimpleNamespace(
+        top=50,
+        highlight=None,
+        output="workflowhub_leaderboard.csv",
+    )
+    run_leaderboard(lb_args)
+
+    print("\n" + "#" * 70)
+    print("# All done! Output files:")
+    print("#   workflowhub_galaxy.csv")
+    print("#   workflowhub_types.csv")
+    print("#   workflowhub_topworkflows.csv")
+    print("#   workflowhub_orgs.csv")
+    print("#   workflowhub_leaderboard.csv")
+    print("#" * 70 + "\n")
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -714,6 +780,14 @@ def main():
         help="Output CSV filename (default: workflowhub_orgs.csv)",
     )
     orgs_parser.set_defaults(func=run_orgs)
+
+    # --- all ---
+    all_parser = subparsers.add_parser(
+        "all",
+        help="Run all subcommands in sequence using default settings",
+        description="Run galaxy, types, topworkflows, orgs, and leaderboard in sequence.",
+    )
+    all_parser.set_defaults(func=run_all)
 
     args = parser.parse_args()
     args.func(args)
