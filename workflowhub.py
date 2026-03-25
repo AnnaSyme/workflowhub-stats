@@ -24,7 +24,7 @@ Examples:
     python3 workflowhub.py galaxy --project-id 12 --output my_project.csv
     python3 workflowhub.py leaderboard --top 100 --highlight "Smith"
     python3 workflowhub.py topworkflows --top 20 --sort-by downloads
-    python3 workflowhub.py topworkflows --max-workflows 0   # check all (slow)
+    python3 workflowhub.py topworkflows --max-workflows 200  # limit to first 200 (faster)
     python3 workflowhub.py types
     python3 workflowhub.py orgs --top 25
     python3 workflowhub.py all
@@ -634,7 +634,7 @@ def run_all(args):
     print("\n" + "#" * 70 + "\n")
 
     types_args = _types.SimpleNamespace(
-        max_workflows=200,
+        max_workflows=0,
         output="workflowhub_types.csv",
     )
     run_types(types_args)
@@ -644,7 +644,7 @@ def run_all(args):
     tw_args = _types.SimpleNamespace(
         top=50,
         sort_by="views",
-        max_workflows=200,
+        max_workflows=0,
         output="workflowhub_topworkflows.csv",
     )
     run_topworkflows(tw_args)
@@ -740,8 +740,8 @@ def main():
         help="Stat to rank by (default: views)",
     )
     tw_parser.add_argument(
-        "--max-workflows", type=int, default=200, metavar="N",
-        help="Maximum number of workflows to check (default: 200; use 0 for all — slow)",
+        "--max-workflows", type=int, default=0, metavar="N",
+        help="Maximum number of workflows to check (default: 0 = all; use a number to limit — faster)",
     )
     tw_parser.add_argument(
         "--output", default="workflowhub_topworkflows.csv", metavar="FILE",
@@ -756,8 +756,8 @@ def main():
         description="Count workflows by type (Galaxy, Nextflow, Snakemake, CWL, etc.).",
     )
     types_parser.add_argument(
-        "--max-workflows", type=int, default=200, metavar="N",
-        help="Maximum number of workflows to check (default: 200; use 0 for all — slow)",
+        "--max-workflows", type=int, default=0, metavar="N",
+        help="Maximum number of workflows to check (default: 0 = all; use a number to limit — faster)",
     )
     types_parser.add_argument(
         "--output", default="workflowhub_types.csv", metavar="FILE",
