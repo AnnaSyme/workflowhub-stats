@@ -4,7 +4,6 @@ A command-line tool for querying statistics from the [WorkflowHub](https://workf
 
 Built by [Anna Syme](https://github.com/annasyme) with [Claude](https://claude.ai) (Anthropic).
 
----
 
 ## What it does
 
@@ -18,19 +17,18 @@ WorkflowHub is a registry for scientific workflows. This tool lets you query it 
 
 Results are printed to the terminal and saved as a CSV file.
 
----
 
 ## Requirements
 
-Python 3 is required. No extra libraries need to be installed — the script uses only Python's built-in modules.
+Python 3.
 
----
+
 
 ## Installation
 
-Download `workflowhub.py` to your computer. That's it.
+Download `workflowhub.py` to your computer. 
 
----
+
 
 ## Usage
 
